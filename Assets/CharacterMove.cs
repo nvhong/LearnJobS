@@ -16,7 +16,7 @@ public class CharacterMove : MonoBehaviour
     [SerializeField] public List<Transform> aTransforms1;
     [SerializeField] public Transform[] aTransforms;
     public TransformAccessArray aaTransforms;
-    NativeList<Vector3> velocity;
+    public NativeList<Vector3> velocity;
     NativeList<Vector3> currPos;
 
     NativeParallelHashMap<int, int> hmapIndex;
@@ -37,7 +37,7 @@ public class CharacterMove : MonoBehaviour
         }
         Application.runInBackground = true;
         uRandom = new Unity.Mathematics.Random(0x6E624EB7u);
-        Application.targetFrameRate = 60;
+        //Application.targetFrameRate = 60;
     }
 
     public void AddTransform(Transform tr)
@@ -65,7 +65,6 @@ public class CharacterMove : MonoBehaviour
 
     public void ChangeOut(int index)
     {
-       // velocity[index] = Vector3.zero;
     }
 
     private void OnDestroy()
@@ -87,9 +86,6 @@ public class CharacterMove : MonoBehaviour
             };
             JobHandle jobHandle = job.Schedule(aaTransforms);
             jobHandle.Complete();
-
-            aaTransforms[0].
-
         }
         else
         {
@@ -112,10 +108,20 @@ public class CharacterMove : MonoBehaviour
         {
             transform.position += velocity[index] * deltaTime;
             if (transform.position.x < -50)
+            {
+                transform.position=Vector3.zero;
+            }
         }
     }
 
 
+    public struct CalSpeedJob : IJob
+    {
+        public NativeList<Vector3> velocity;
+        public void Execute()
+        {
+        }
+    }
 }
 
 
