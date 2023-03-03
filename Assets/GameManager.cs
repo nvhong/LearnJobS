@@ -9,15 +9,13 @@ using Unity.Burst;
 
 public class GameManager : MonoBehaviour
 {
-    public Unity.Collections.NativeList<JobHandle> jobs;
+    public SListPath sListPaths;
     public static GameManager _this;
     private void Awake()
     {
         if (_this == null)
         {
-            // _this = this;
-            // jobs = new NativeList<JobHandle>(1000, Allocator.TempJob);
-            // JobHandle.CompleteAll(jobs);
+            sListPaths= new SListPath();         
         }
     }
 }
@@ -26,7 +24,7 @@ public class GameManager : MonoBehaviour
 public struct SListPath
 {
     public NativeParallelHashMap<int,SPath> sPaths ;
-    public SListPath()
+    public SListPath(int a)
     {
            sPaths = new NativeParallelHashMap<int,SPath>(0,Allocator.Persistent);
     }
@@ -34,22 +32,42 @@ public struct SListPath
     {
         sPaths.Dispose();
     }
+
+    public void AddPath(string key, SPath sp)
+    {
+        int count = key.Length;
+        int id=0;
+        for(int i=0;i<count;i++){
+            id +=(int)key[i];
+        }
+        sPaths.Add(id, sp);
+    }
+
+     public SPath GetPath(string key)
+    {
+        int count = key.Length;
+        int id=0;
+        for(int i=0;i<count;i++){
+            id +=(int)key[i];
+        }
+        return sPaths[id];
+    }
+
 }
 
 public struct SPath
 {
-    public NativeHashMap<int, int> naPoints;
-    public SPath()
+    public NativeList<SPoint> naPoints;
+    public SPath(int a)
     {
-        naPoints= new NativeHashMap<int, int>();
-       // naPoints = new NativeArray<SPoint>(0, Allocator.Persistent);
+        naPoints= new NativeList<SPoint>(0, Allocator.Persistent);
     }
-    // public void Dispose(){
-    //    // naPoints.Dispose();
-    // }
-    // public void AddPoints(SPoint p){
-    //     naPoints.Add(p);
-    // }
+    public void Dispose(){
+       naPoints.Dispose();
+    }
+    public void AddPoints(SPoint p){
+        naPoints.Add(p);
+    }
 }
 
 public struct SPoint
